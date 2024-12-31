@@ -13,7 +13,6 @@ app.use(cors());
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 
-// MySQL connection
 const db = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.DB_USER || "root",
@@ -21,7 +20,6 @@ const db = mysql.createPool({
   database: process.env.DB_NAME || "authApp",
 });
 
-// Check database connection
 (async () => {
   try {
     await db.query("SELECT 1");
@@ -31,7 +29,6 @@ const db = mysql.createPool({
   }
 })();
 
-// Register
 app.post("/register", async (req, res) => {
   const { email, password } = req.body;
 
@@ -63,7 +60,6 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// Login
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -96,7 +92,6 @@ app.post("/login", async (req, res) => {
   }
 });
 
-// POST /messages - for authenticated users
 app.post("/messages", authenticateToken, async (req, res) => {
   const { text } = req.body;
 
@@ -105,10 +100,8 @@ app.post("/messages", authenticateToken, async (req, res) => {
   }
 
   try {
-    // Ambil informasi user dari token
-    const userId = req.user.id; // ID pengguna yang terautentikasi
+    const userId = req.user.id; 
 
-    // Simpan pesan ke database dengan menggunakan userId
     const query =
       "INSERT INTO messages (user_id, text, sender) VALUES (?, ?, ?)";
     await db.execute(query, [userId, text, "user"]);
@@ -120,7 +113,6 @@ app.post("/messages", authenticateToken, async (req, res) => {
   }
 });
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
